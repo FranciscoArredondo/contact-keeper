@@ -30,13 +30,17 @@ const AuthState = props => {
 
   // Load User
   const loadUser = async () => {
+    console.log('loading user...');
     if (localStorage.token) {
+      console.log('localstorage token found!', localStorage.token);
       setAuthToken(localStorage.token);
     }
     try {
       const res = await axios.get('/api/auth');
+      console.log('user authentication success!', res.data);
       dispatch({ type: USER_LOADED, payload: res.data });
     } catch (err) {
+      console.log('user authentication error', err);
       dispatch({ type: AUTH_ERROR });
     }
   };
@@ -54,12 +58,27 @@ const AuthState = props => {
       dispatch({ type: REGISTER_SUCCESS, payload: res.data });
       loadUser();
     } catch (err) {
-      console.log(err);
-      console.log(err.response.data.msg);
       dispatch({ type: REGISTER_FAIL, payload: err.response.data.msg });
     }
   };
+
   // Login User
+  const login = async formData => {
+    const config = {
+      headers: {
+        'Context-Type': 'application/json',
+      },
+    };
+
+    try {
+      const res = await axios.post('/api/auth', formData, config);
+      console.log('trying to authorize user....', res.data);
+      dispatch({ type: LOGIN_SUCCESS, payload: res.data });
+      loadUser();
+    } catch (err) {
+      dispatch({ type: LOGIN_FAIL, payload: err.response.data.msg });
+    }
+  };
 
   // Logout
 
@@ -77,6 +96,7 @@ const AuthState = props => {
         register,
         clearErrors,
         loadUser,
+        login,
       }}>
       {props.children}
     </AuthContext.Provider>
