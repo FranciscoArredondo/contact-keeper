@@ -89,6 +89,7 @@ typings/
 
 # Configuration files
 config/default.json
+config/production.json
 
 # dependencies
 client/node_modules
