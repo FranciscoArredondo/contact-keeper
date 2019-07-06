@@ -30,17 +30,13 @@ const AuthState = props => {
 
   // Load User
   const loadUser = async () => {
-    console.log('loading user...');
     if (localStorage.token) {
-      console.log('localstorage token found!', localStorage.token);
       setAuthToken(localStorage.token);
     }
     try {
       const res = await axios.get('/api/auth');
-      console.log('user authentication success!', res.data);
       dispatch({ type: USER_LOADED, payload: res.data });
     } catch (err) {
-      console.log('user authentication error', err);
       dispatch({ type: AUTH_ERROR });
     }
   };
@@ -72,7 +68,6 @@ const AuthState = props => {
 
     try {
       const res = await axios.post('/api/auth', formData, config);
-      console.log('trying to authorize user....', res.data);
       dispatch({ type: LOGIN_SUCCESS, payload: res.data });
       loadUser();
     } catch (err) {

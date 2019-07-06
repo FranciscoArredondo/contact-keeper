@@ -37,7 +37,6 @@ const ContactForm = () => {
     if (current === null) {
       addContact(contact);
     } else {
-      console.log('Trying to update contact...', { contact, current });
       updateContact(contact);
       clearCurrent();
     }
