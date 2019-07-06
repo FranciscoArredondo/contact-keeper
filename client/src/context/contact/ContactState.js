@@ -1,7 +1,8 @@
 import React, { useReducer } from 'react';
-import uuid from 'uuid';
 import ContactContext from './contactContext';
 import ContactReducer from './contactReducer';
+import axios from 'axios';
+
 import {
   ADD_CONTACT,
   DELETE_CONTACT,
@@ -10,50 +11,33 @@ import {
   UPDATE_CONTACT,
   FILTER_CONTACTS,
   CLEAR_FILTER,
+  CONTACT_ERROR,
 } from '../types';
 
 const ContactState = props => {
   const initalState = {
-    contacts: [
-      {
-        id: uuid.v4(),
-        name: 'Jill Johnson',
-        email: 'frarredo@gmail.com',
-        phone: '858-224-8965',
-        type: 'professional',
-      },
-      {
-        id: uuid.v4(),
-        name: 'Jones Watson',
-        email: 'jwatson@gmail.com',
-        phone: '626-423-9876',
-        type: 'personal',
-      },
-      {
-        id: uuid.v4(),
-        name: 'Sherlocke Holmes',
-        email: 'sherlock.holmes@hotmail.com',
-        phone: '5555555555',
-        type: 'personal',
-      },
-      {
-        id: uuid.v4(),
-        name: 'Rad Johnson',
-        email: 'r.johnson@gmail.com',
-        phone: '888-999-8976',
-        type: 'personal',
-      },
-    ],
+    contacts: [],
     current: null,
     filtered: null,
+    error: null,
   };
 
   const [state, dispatch] = useReducer(ContactReducer, initalState);
 
   // Add Contact
-  const addContact = contact => {
-    contact.id = uuid.v4();
-    dispatch({ type: ADD_CONTACT, payload: contact });
+  const addContact = async contact => {
+    const config = {
+      headers: {
+        'Context-Type': 'application/json',
+      },
+    };
+
+    try {
+      const res = await axios.post('/api/contacts', contact, config);
+      dispatch({ type: ADD_CONTACT, payload: res.data });
+    } catch (err) {
+      dispatch({ type: CONTACT_ERROR, payload: err.response.msg });
+    }
   };
 
   // Delete Contact
@@ -92,6 +76,7 @@ const ContactState = props => {
         contacts: state.contacts,
         current: state.current,
         filtered: state.filtered,
+        error: state.error,
         addContact,
         deleteContact,
         setCurrent,
