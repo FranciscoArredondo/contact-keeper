@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import ContactContext from '../../context/contact/contactContext';
+import { SET_CURRENT } from '../../context/types';
 
 const ContactForm = () => {
   const contactContext = useContext(ContactContext);
@@ -36,7 +37,9 @@ const ContactForm = () => {
     if (current === null) {
       addContact(contact);
     } else {
+      console.log('Trying to update contact...', { contact, current });
       updateContact(contact);
+      clearCurrent();
     }
 
     setContact({
